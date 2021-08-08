@@ -1,0 +1,7 @@
+name = "DistributedWalker"
+uuid = "f3a54530-c450-4980-80ae-dbd1e9a19dc3"
+authors = ["David MacMahon <davidm@astro.berkeley.edu>"]
+version = "0.1.0"
+
+[deps]
+Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
