@@ -152,7 +152,7 @@ function launch(work::Function, predicate::Function, topdirs::AbstractVector;
     jobchans = makejobchannels(jobchansize)
     results = RemoteChannel(()->Channel{Tuple}(resultschansize), 1)
     for proc in procs
-        remote_do(workjobs, proc, predicate, work, jobchans[leader(proc)], results, topdirs)
+        remote_do(workjobs, proc, work, predicate, jobchans[leader(proc)], results, topdirs)
     end
     results
 end
