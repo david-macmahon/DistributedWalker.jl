@@ -84,9 +84,9 @@ resultschannel = DistributedWalker.launch(filesize, endswith(".h5"), "/datax")
 # Use `getresults` to read all results from the channel and add up all the
 # filesizes.  By default, `getresults` ends after reading `nworkers()` empty
 # results.
-totalsize = 0
-DistributedWalker.getresults(results) do (hostname, id, filename, size)
-    global totalsize += size
+totalsize = Ref(0)
+DistributedWalker.getresults(results, args=(totalsize,)) do host, id, fname, size, total
+    total[] += size
 end
-println("total size is $totalsize")
+println("total size is $(totalsize[])")
 ```

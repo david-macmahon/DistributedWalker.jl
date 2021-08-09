@@ -179,22 +179,27 @@ function launch(work::Function, topdir::AbstractString;
 end
 
 """
-Take results from the `results` channel and pass each one to `f` untl receiving
-`npending` empty results.  If `f` is not given, it defaults to `println`.
+Take results Tuples from the `results` channel and pass each one to `f` untl
+receiving `npending` empty results.  The function `f` is passed the splatted
+results Tuple and the splatted `args` Tuple.  If `f` is not given, each reults
+Tuple is printed with `println` (i.e. one per line) and `args` is ignored.
 """
-function getresults(f::Function, results, npending=nworkers())
+function getresults(f::Function, results, npending=nworkers(); args::Tuple=())
     while npending > 0
         result = take!(results)
         if result[4] === nothing
             npending -= 1
         else
-            f(result)
+            f(result..., args...)
         end
     end
 end
 
 function getresults(results, npending=nworkers())
-    getresults(println, results, npending)
+    getresults(results, npending) do host, id, fname, result
+        # Print splatted args as the Tuple they were
+        println((host, id, fname, result))
+    end
 end
 
 end # module DistributedWalker
