@@ -89,10 +89,6 @@ function workjobs(work::Function, predicate::Function,
         end
     end
 
-    ## Supress HDF5 error messages
-    #olderrhandler = HDF5.h5e_get_auto(HDF5.H5E_DEFAULT)
-    #HDF5.h5e_set_auto(HDF5.H5E_DEFAULT, C_NULL, C_NULL)
-
     # Take jobs (i.e. filename) until we have no more pending jobmakers
     pending_jobmakers = length(topdirs)
     while pending_jobmakers > 0
@@ -112,20 +108,7 @@ function workjobs(work::Function, predicate::Function,
             msg = String(take!(msgbuf))
             @error """$hostname[$id]: work("$job") got $msg""" _file=nothing _module=nothing
         end
-        #status = "noth5x"
-        #try
-        #    if HDF5.ishdf5(fname) && ish5x(fname)
-        #        polbug = haspolbug(fname)
-        #        status = polbug ? "polbug" : "ok"
-        #    end
-        #catch
-        #    status = "corrupt"
-        #end
-        #put!(results, (hostname, id, fname, status))
     end
-
-    ## Restore HDF5 error handling
-    #HDF5.h5e_set_auto(HDF5.H5E_DEFAULT, olderrhandler...)
 
     # Put empty result into results channel
     put!(results, (hostname, id, "", nothing))
