@@ -93,8 +93,16 @@ function workjobs(work::Function, predicate::Function,
     #olderrhandler = HDF5.h5e_get_auto(HDF5.H5E_DEFAULT)
     #HDF5.h5e_set_auto(HDF5.H5E_DEFAULT, C_NULL, C_NULL)
 
-    # Take jobs (i.e. filename) until we get an empty job
-    while (job=take!(jobs); !isempty(job))
+    # Take jobs (i.e. filename) until we have no more pending jobmakers
+    pending_jobmakers = length(topdirs)
+    while pending_jobmakers > 0
+        job=take!(jobs)
+
+        if isempty(job)
+            pending_jobmakers -= 1
+            continue
+        end
+
         try
             result = work(job)
             result === nothing || put!(results, (hostname, id, job, result))
